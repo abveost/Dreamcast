@@ -1,3 +1,18 @@
+This is a set of scripts to do one very specific task.  Convert all redump zips in a directory to a set of files to be used with GDEMU.  Currently it does nothing else.  Hopefully someone will find this or parts of it useful or can adapt it to do what they want.  This software is licensed under the GPLv3.
+
+Requirements:
+
+bash (with basic set of commands, ls, cp, mv, unzip, maybe a few more)
+python
+node.js
+gdi-utils
+bin/cdi4dc
+bin/mkisofs
+dat/IP.BIN
+menu/1ST_READ.BIN
+
+If you have any of the last two that can be included in this repo I'm happy to include them.  If you have source for cdi4dc I'd be interested in that as well.
+
 List of scripts:
 
 dooweet: A wrapper for all the scripts to copy/convert everything in a source folder to an SD for GDEMU
@@ -12,16 +27,5 @@ mk_menu: build a gdi with gemenu using IP.BIN and 1ST_READ.BIN+LIST.INI
 
 2to3: reaname folders from 2 digit to 3 digit
 
-Requirements:
-
-bash (with basic set of commands, ls, cp, mv, unzip, maybe a few more)
-python
-node.js
-gditools
-gdi-utils
-cdi4dc
-mkisofs
-IP.BIN
-1ST_READ.BIN
-
 Tested on windows using gitbash and cygwin bash
+
