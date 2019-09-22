@@ -1,0 +1,73 @@
+#!/bin/bash
+#/d/git/Dreamcast/GDEMU_SD_BUILDER
+#./dcc -i '//10.0.0.109/VG0/ROM/DC_REDUMP_U'  -o "/d/sd"
+
+EXE_gdi_utils=/d/git/gdi-utils-master/bin/bin-nodejs/index.js
+
+opt_DRYRUN=0
+opt_DIGIT=%03d
+opt_dmatch="\d\d\d"
+echo "dcc v.01"
+while getopts ":i:o:D:2:" opt; do
+  case $opt in
+    o)
+        mysd="$OPTARG"
+    ;;
+    i)
+	    myroms="$OPTARG"
+    ;;
+    D)
+	    opt_DRYRUN=1
+    ;;
+    2)
+        opt_DIGIT=%02d
+        opt_dmatch="\d\d"
+    ;;
+    \?) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+
+if [ -z "$myroms" ] || [ -z "$mysd" ]
+then
+   echo USAGE: dcc -i inputdir -o outputdir
+fi
+
+mylist=($myroms/*)
+#strip path
+mylist=( "${mylist[@]##*/}" )
+
+echo Total: ${#mylist[@]} # will echo number of elements in array
+
+mkdir -p /tmp/tmp_rom/unzip
+mkdir -p /tmp/tmp_rom/output
+
+for fname in "${mylist[@]}"
+do
+   : 
+
+    mkdir "/tmp/tmp_rom/unzip/$fname"
+    mkdir "/tmp/tmp_rom/output/$fname"
+    unzip -e "$myroms/$fname" -d "/tmp/tmp_rom/unzip/$fname"
+    mygdi=$(ls "/tmp/tmp_rom/unzip/$fname/"*.gdi)
+    echo MYGDI:$mygdi
+    echo $fname
+    echo node $EXE_gdi_utils "'$mygdi'" 0 "'/tmp/tmp_rom/output/$fname'"
+    echo node $EXE_gdi_utils "'$mygdi'" 0 "'/tmp/tmp_rom/output/$fname'" |sh
+
+    pushd gditools
+    python gdishrink.py "/tmp/tmp_rom/output/$fname/disc.gdi"
+    popd
+    
+    LIST=$(/usr/bin/ls "$mysd/" |grep -P "^$opt_dmatch$")
+    LIST=($LIST)
+    if [ -z $LIST ]; then LIST=(1); fi
+    lf=${LIST[${#LIST[@]}-1]}
+    lf=$(echo $lf | sed 's/^0*//')
+    ((lf++))
+    lf=$(printf $opt_DIGIT $lf)
+    echo Moving to SD
+     mv "/tmp/tmp_rom/output//$fname" "$mysd/$lf/"
+     rm -rf "/tmp/tmp_rom/unzip/$fname"
+done

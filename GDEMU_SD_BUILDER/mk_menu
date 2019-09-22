@@ -1,0 +1,32 @@
+#!/bin/bash
+
+opt_DRYRUN=0
+opt_DIR="001"
+while getopts "2D" opt; do
+  case $opt in
+	2)
+        opt_DIR="01"
+	;;
+    D) opt_DRYRUN=1
+    ;;
+    *) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+shift $(($OPTIND-1))
+mysd="$1"
+
+if [ -z "$mysd" ]
+then
+   echo USAGE: mk_menu [options] [SD path]
+   echo options:
+   echo -2 Use 2 digit directories instead of 3
+   echo -D Dry run
+   exit;
+fi
+
+./bin/mkisofs -C 0,11702 -V MYGDMENU -G ./dat/IP.BIN -joliet -rock -l -o /tmp/disc.iso ./menu
+./bin/cdi4dc /tmp/disc.iso /tmp/disc.cdi
+mkdir "$mysd/$opt_DIR"
+cp /tmp/disc.cdi  "$mysd/$opt_DIR"

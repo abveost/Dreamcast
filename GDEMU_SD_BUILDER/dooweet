@@ -1,0 +1,8 @@
+#!/bin/bash
+#./dooweet '//10.0.0.109/VG0/ROM/DC_REDUMP_U'  '/d/sd'
+myroms="$1"
+mysd="$2"
+./dcc -i "$myroms" -o "$mysd"
+./reorder "$mysd"
+./build_list-ini "$mysd" >./menu/LIST.INI
+./mk_menu "$mysd"

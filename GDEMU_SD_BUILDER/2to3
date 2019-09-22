@@ -1,0 +1,47 @@
+#!/bin/bash
+#mysd="$1"
+
+opt_DIGIT="0"
+opt_DRYRUN=0
+while getopts ":d:D" opt; do
+  case $opt in
+	d)
+	opt_DIGIT=$OPTARG
+	;;
+    D)
+	opt_DRYRUN=1
+    ;;
+    *) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+shift $(($OPTIND-1))
+mysd="$1"
+echo $opt_DRYRUN
+
+
+if [ -z "$mysd" ]
+then
+	echo USAGE: 2to3 [SD path]
+	echo options:
+	echo -d Leading digit \(deafult=0\)
+	echo -D Dry run
+	exit;
+fi
+
+mylist=($(/usr/bin/ls -w1 $mysd/ |grep -P "^\d\d$"))
+
+for i in "${mylist[@]}"; do
+
+	#	num=$(printf $opt_DIGIT ${i#0})
+	#	file=$(echo $mysd/$num/track03.iso)
+	cmd="mv \"$mysd/$i\" \"$mysd/$opt_DIGIT$i\""
+	if [ $opt_DRYRUN == 0 ]
+	then
+		echo $cmd
+	else
+		`echo tick  $cmd`
+	fi
+done
+exit 1;

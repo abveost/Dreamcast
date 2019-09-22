@@ -1,0 +1,27 @@
+List of scripts:
+
+dooweet: A wrapper for all the scripts to copy/convert everything in a source folder to an SD for GDEMU
+
+dcc: goes through all files in a folder, unzips them one by one to tmp, converts from redump to normal, shrinks, and moves the folder the output path, ie your SD using a sequential 2 digit directory name
+
+reorder: rename directories in numerical order based on the name in track03.iso in each folder
+
+build_list-ini: create a LIST.INI based on the data in track03.iso for each of those directories.
+
+mk_menu: build a gdi with gemenu using IP.BIN and 1ST_READ.BIN+LIST.INI
+
+2to3: reaname folders from 2 digit to 3 digit
+
+Requirements:
+
+bash (with basic set of commands, ls, cp, mv, unzip, maybe a few more)
+python
+node.js
+gditools
+gdi-utils
+cdi4dc
+mkisofs
+IP.BIN
+1ST_READ.BIN
+
+Tested on windows using gitbash and cygwin bash
