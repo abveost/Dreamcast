@@ -32,8 +32,8 @@ if [ -z "$myroms" ] || [ -z "$mysd" ]
 then
    echo USAGE: dcc -i inputdir -o outputdir
 fi
-myroms=$(printf "%q" "$myroms")
-mysd=$(printf "%q" "$mysd")
+#myroms=$(printf "%q" "$myroms")
+#mysd=$(printf "%q" "$mysd")
 
 mylist=($myroms/*)
 #strip path
@@ -49,21 +49,20 @@ for fname in "${mylist[@]}"
 do
    : 
 
-   fname= $(printf "%q" "$fname")
+#   fname= $(printf "%q" "$fname")
     mkdir "/tmp/tmp_rom/unzip/$fname"
     mkdir "/tmp/tmp_rom/output/$fname"
     unzip -e "$myroms/$fname" -d "/tmp/tmp_rom/unzip/$fname"
-#    unzip -e "$myroms/$fname" -d "/tmp/tmp_rom/unzip/rom"
+	#    unzip -e "$myroms/$fname" -d "/tmp/tmp_rom/unzip/rom"
 #	fname=rom
 	
     mygdi=$(ls "/tmp/tmp_rom/unzip/$fname/"*.gdi)
     echo MYGDI:$mygdi
     echo $fname
-#    echo node $EXE_gdi_utils "'$mygdi'" 0 $(printf "%q" "/tmp/tmp_rom/output/$fname")
-#    echo node $EXE_gdi_utils "'$mygdi'" 0 $(printf "%q" "/tmp/tmp_rom/output/$fname") |sh
-    echo node $EXE_gdi_utils "'$mygdi'" 0  "/tmp/tmp_rom/output/$fname"
-    echo node $EXE_gdi_utils "'$mygdi'" 0  "/tmp/tmp_rom/output/$fname" |sh
-    
+    echo node $EXE_gdi_utils "'$mygdi'" 0 $(printf "%q" "/tmp/tmp_rom/output/$fname")
+    echo node $EXE_gdi_utils "'$mygdi'" 0 $(printf "%q" "/tmp/tmp_rom/output/$fname") |sh
+#    echo node $EXE_gdi_utils "'$mygdi'" 0  "/tmp/tmp_rom/output/$fname"
+#    echo node $EXE_gdi_utils "'$mygdi'" 0  "/tmp/tmp_rom/output/$fname" |sh
     if [ ! -z "/tmp/tmp_rom/output/$fname/disc.gdi" ] 
     then
         #mkdir "/tmp/tmp_rom/output/$fname/"
@@ -98,6 +97,5 @@ do
 
     echo Moving to SD: $lf
 	mv "/tmp/tmp_rom/output/$fname" "$mysd/$lf"
-#!!!    rm -rf "/tmp/tmp_rom/unzip/$fname"
-exit 1;
+    rm -rf "/tmp/tmp_rom/unzip/$fname"
 done
