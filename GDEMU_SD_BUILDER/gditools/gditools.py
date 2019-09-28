@@ -973,6 +973,8 @@ def parse_gdi(filename, verbose=False):
 
 
 def get_filesize(filename):
+    #print ('!!!!!!!!')
+    #print (filename)    
     with open(filename) as f:
         f.seek(0,2)
         return f.tell()

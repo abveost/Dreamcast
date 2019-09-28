@@ -3,6 +3,6 @@
 myroms="$1"
 mysd="$2"
 ./dcc -i "$myroms" -o "$mysd"
-./reorder "$mysd"
+####./reorder "$mysd"
 ./build_list-ini "$mysd" >./menu/LIST.INI
 ./mk_menu "$mysd"

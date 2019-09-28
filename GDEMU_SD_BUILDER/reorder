@@ -3,16 +3,10 @@
 #mysd=/f
 
 opt_DRYRUN=0
-opt_DIGIT=%03d
-opt_dmatch="\d\d\d"
-opt_dexclude="001"
-while getopts "2D" opt; do
+opt_dmatch="^\d\d\d?\d?$"
+opt_dexclude="^01$"
+while getopts "D" opt; do
   case $opt in
-    2)
-    opt_DIGIT=%02d
-    opt_dmatch="\d\d"
-    opt_dexclude="01"
-    ;;
     D) opt_DRYRUN=1
     ;;
     *) echo "Invalid option -$OPTARG" >&2
@@ -27,14 +21,15 @@ if [ -z "$mysd" ]
 then
    echo USAGE: reorder [options] [SD path]
    echo options:
-   echo -2 Use 2 digit directories instead of 3
    echo -D Dry run
    exit;
 fi
 
 
+#find "$mysd"  -type d -empty -exec rmdir {} \;
+
 #mylist=($(/usr/bin/ls -w1 $mysd/ |grep -P "\d\d" |grep -v 01))
-mylist=($(/usr/bin/ls -w1 $mysd/ |grep -P "^$opt_dmatch$" |grep -v "$opt_dexclude"))
+mylist=($(/usr/bin/ls -v -w1 $mysd/ |grep -P "^$opt_dmatch$" |grep -v "$opt_dexclude"))
 
 declare -a num_name
 
@@ -42,7 +37,11 @@ declare -a num_name
 for i in "${mylist[@]}"
 do
    : 
-   myname=$(dd if="$mysd/$i/track03.iso" skip=128 count=50  bs=1 status=none | sed -e 's/[[:space:]]*$//')
+   mytrack=$(ls "$mysd/$i/track03".*)
+   echo $mytrack!!!!
+   #dd if="$mysd/$i/track03.*" skip=128 count=50  bs=1 status=none | sed -e 's/[[:space:]]*$//'	
+   #myname=$(dd if="$mysd/$i/track03.*" skip=128 count=50  bs=1 status=none | sed -e 's/[[:space:]]*$//')
+   myname=$(dd if="$mytrack" skip=128 count=50  bs=1 status=none | sed -e 's/[[:space:]]*$//')	
    num_name[${i#0}]="$myname"
 done
 
@@ -70,8 +69,19 @@ sorted_keys=($(
 unset IFS; set +f
 
 for key in "${!sorted_keys[@]}"; do
-    od=$(printf $opt_DIGIT ${sorted_keys[$key]})
-    dd=$(printf $opt_DIGIT $((key+2)))
+#    od=$(printf $opt_DIGIT ${sorted_keys[$key]})
+#    dd=$(printf $opt_DIGIT $((key+2)))
+    od=${sorted_keys[$key]}
+    if [ ${#od} == 1 ]
+    then 
+	    od=0${od}
+	fi
+    dd=$((key+2))
+    if [ ${#dd} == 1 ]
+    then 
+	    dd=0${dd}
+	fi
+
     cmd="mv "$mysd/$od.new" "$mysd/$dd""
 
     if [ $opt_DRYRUN == 1 ]

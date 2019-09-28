@@ -39,9 +39,11 @@ for i in "${mylist[@]}"; do
 	cmd="mv \"$mysd/$i\" \"$mysd/$opt_DIGIT$i\""
 	if [ $opt_DRYRUN == 0 ]
 	then
-		echo $cmd
+		echo #run
+		echo $cmd |sh
 	else
-		`echo tick  $cmd`
+		echo #dry
+		echo  $cmd
 	fi
 done
 exit 1;

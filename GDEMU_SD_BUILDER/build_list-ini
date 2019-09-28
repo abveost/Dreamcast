@@ -1,18 +1,12 @@
 #!/bin/bash
 
-opt_DIGIT=%03d
-opt_dmatch="\d\d\d"
-opt_dexclude="001"
-while getopts "u2" opt; do
+opt_dmatch="^\d\d\d?\d?$"
+opt_dexclude="^01$"
+while getopts "u" opt; do
   case $opt in
     u)
 	opt_UPPER=1
     ;;
-	2)
-	opt_DIGIT=%02d
-	opt_dmatch="\d\d"
-	opt_dexclude="01"
-	;;
     D) opt_DRYRUN=1
     ;;
     *) echo "Invalid option -$OPTARG" >&2
@@ -28,12 +22,10 @@ then
    echo USAGE: build_list-ini [options] [SD path]
    echo options:
    echo -u Don\'t convert name to Sentence Case
-   echo -2 Use 2 digit directories instead of 3
    exit;
 fi
 
-i=1
-num=$(printf $opt_DIGIT ${i#0})
+num=01
 
 echo [GDMENU]
 echo $num.name=GDMENU
@@ -48,34 +40,16 @@ echo
 
 #mylist=($(/usr/bin/ls -w1 $mysd/ |grep -P "\d\d" |grep -v 01))
 #mylist=($(/usr/bin/ls -w1 $mysd/ |grep -P "$opt_dmatch" |grep -v "$opt_dexclude"))
-mylist=($(/usr/bin/ls -w1 $mysd/ |grep -P "^$opt_dmatch$" |grep -v "$opt_dexclude"))
+mylist=($(/usr/bin/ls -v -w1 $mysd/ |grep -P "^$opt_dmatch$" |grep -v "$opt_dexclude"))
 
 
 for i in "${mylist[@]}"; do
+mydir=$i
+    if [ ${#mydir} == 1 ]
+    then 
+	    mydir=0${mydir}
+	fi
 
-	num=$(printf $opt_DIGIT ${i#0})
-	file=$(echo $mysd/$num/track03.iso)
-
-	echo -n $num.name=
-	dd if="$file" skip=128 count=50  bs=1 status=none | sed -e 's/[[:space:]]*$//' | sed 's/.*/\L&/; s/[a-z]*/\u&/g'
-	echo
-	echo -n $num.disc=
-	dd if="$file" skip=43 count=3  bs=1 status=none
-	echo 
-	echo -n $num.vga=
-	dd if="$file" skip=61 count=1  bs=1 status=none
-	echo 
-	echo -n $num.region=
-	dd if="$file" skip=48 count=7  bs=1 status=none | sed -e 's/[[:space:]]//'
-	echo 
-	echo -n $num.version=
-	dd if="$file" skip=74 count=6  bs=1 status=none
-	echo 
-	echo -n $num.date=
-	dd if="$file" skip=80 count=8  bs=1 status=none
-	echo 
-	echo 
-
+./rom_info -n $i $mysd/$mydir
 done
 exit 1;
-

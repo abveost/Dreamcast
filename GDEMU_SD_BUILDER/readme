@@ -1,10 +1,10 @@
-This is a set of scripts to do one very specific task.  Convert all redump zips in a directory to a set of files to be used with GDEMU.  Currently it does nothing else.  Hopefully someone will find this or parts of it useful or can adapt it to do what they want.  This software is licensed under the GPLv3.
+This is a set of scripts to convert all zips in a directory to a set of files to be used with GDEMU.  It handles a number of flavors of gdi including redump.  This software is licensed under the GPLv3.
 
 Requirements:
 
 bash (with basic set of commands, ls, cp, mv, unzip, maybe a few more)
 python
-node.js
+node.js (for redump conversion)
 gdi-utils
 bin/cdi4dc
 bin/mkisofs
@@ -26,6 +26,8 @@ build_list-ini: create a LIST.INI based on the data in track03.iso for each of t
 mk_menu: build a gdi with gemenu using IP.BIN and 1ST_READ.BIN+LIST.INI
 
 2to3: reaname folders from 2 digit to 3 digit
+
+rom_info: returns info about a set of files.  Used to build LIST.INI
 
 Tested on windows using gitbash and cygwin bash
 
